@@ -2,6 +2,31 @@
 
 This project contains pytest test cases for testing the API endpoints.
 
+## Results
+3 failed, 15 passed, 1 skipped in 6.77s 
+|      filepath       |               function                | passed | failed | skipped | SUBTOTAL |
+| ------------------- | ------------------------------------- | -----: | -----: | ------: | -------: |
+| v1/test_smoke_v1.py | test_smoke_green                      |      1 |      0 |       0 |        1 |
+| v1/test_smoke_v1.py | test_verified_date_is_correct         |      1 |      0 |       0 |        1 |
+| v1/test_smoke_v1.py | test_post_verified_date_is_correct    |      1 |      0 |       0 |        1 |
+| v1/test_smoke_v1.py | test_put_verified_date_is_correct     |      1 |      0 |       0 |        1 |
+| v1/test_smoke_v1.py | test_get_deals_green                  |      1 |      0 |       0 |        1 |
+| v1/test_smoke_v1.py | test_get_deal_green                   |      1 |      0 |       0 |        1 |
+| v1/test_smoke_v1.py | test_update_on_non_existing           |      1 |      0 |       0 |        1 |
+| v1/test_smoke_v1.py | test_delete_on_non_existing           |      1 |      0 |       0 |        1 |
+| v1/test_smoke_v1.py | test_merchants_green                  |      1 |      0 |       0 |        1 |
+| v2/test_smoke_v2.py | test_smoke_green                      |      1 |      0 |       0 |        1 |
+| v2/test_smoke_v2.py | test_get_deals_green                  |      1 |      0 |       0 |        1 |
+| v2/test_smoke_v2.py | test_get_deal_green                   |      1 |      0 |       0 |        1 |
+| v2/test_smoke_v2.py | test_update_on_non_existing           |      1 |      0 |       0 |        1 |
+| v2/test_smoke_v2.py | test_delete_on_non_existing           |      1 |      0 |       0 |        1 |
+| v2/test_smoke_v2.py | test_merchants_green                  |      1 |      0 |       0 |        1 |
+| v2/test_smoke_v2.py | test_verified_date_is_correct         |      0 |      1 |       0 |        1 |
+| v2/test_smoke_v2.py | test_post_verified_date_is_correct    |      0 |      1 |       0 |        1 |
+| v2/test_smoke_v2.py | test_put_verified_date_is_correct     |      0 |      1 |       0 |        1 |
+| v2/test_smoke_v2.py | test_search_on_different_query_params |      0 |      0 |       1 |        1 |
+| TOTAL               |                                       |     15 |      3 |       1 |       19 |
+
 ## Setup
 
 1. Create a virtual environment (recommended):
@@ -30,6 +55,12 @@ python -m pytest
 To run a specific test:
 ```bash
 python -m pytest test_api.py::test_get_deals
+```
+
+Get reports
+```bash
+pip install pytest-md-report
+python -m pytest --md-report --md-report-verbose=1 
 ```
 
 ## Test Cases
