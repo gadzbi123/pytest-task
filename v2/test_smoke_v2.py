@@ -178,7 +178,7 @@ def test_put_verified_date_is_correct():
 
 
 def test_search_on_different_query_params():
-    pytest.skip("i get 500 on this test and need to look at server logs  ¯_\\(ツ)_/¯")
+    pytest.skip("i get 500 on this test and need to look at server logs  ¯__(ツ)_/¯")
     newDeals = [
         ["a", False, "Sport"],
         ["b", True, "Sport"],
