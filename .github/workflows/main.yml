@@ -1,7 +1,9 @@
 name: md-report - pull request example
 
 on:
-  pull_request:
+  push:
+    branches:
+      - master 
 
 jobs:
   run-tests:
