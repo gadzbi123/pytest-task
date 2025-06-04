@@ -1,4 +1,5 @@
-name: md-report - pull request example
+name: run test in github actions  
+
 
 on:
   push:
