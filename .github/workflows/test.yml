@@ -27,8 +27,10 @@ jobs:
         shell: bash
         run: |
           echo "REPORT_FILE=${REPORT_OUTPUT}" >> "$GITHUB_ENV"
-          pip3 install -r requirements.txt
-          python3 -m pytest -v --md-report --md-report-flavor gfm --md-report-exclude-outcomes passed skipped xpassed --md-report-output "$REPORT_OUTPUT"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install requests
+          python -m pytest -v --md-report --md-report-flavor gfm --md-report-exclude-outcomes passed skipped xpassed --md-report-output "$REPORT_OUTPUT"
 
       - name: Render the report to the PR when tests fail
         uses: marocchino/sticky-pull-request-comment@v2
