@@ -9,7 +9,7 @@ def Is_uuid(s):
 def get_unique_test_data(prefix=""):
     """Helper function to generate unique test data"""
     unique_id = str(uuid.uuid4())[:8]
-    print("regression-test-{prefix}{unique_id}.com")
+    print(f"regression-test-{prefix}{unique_id}.com")
     return {
         "title": f"Regression Test Deal {prefix}{unique_id}",
         "description": f"Testing v1 vs v2 consistency {prefix}{unique_id}",

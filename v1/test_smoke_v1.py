@@ -246,6 +246,7 @@ def test_merchants_green():
     endpoint = f"/api/v1/GetMerchants"
     response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS)
 
+    print(f"resp={response.text}")
     assert response.status_code == 200
 
     data = response.json()
