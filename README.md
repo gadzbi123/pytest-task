@@ -3,7 +3,7 @@
 This project contains pytest test cases for testing the API endpoints.
 
 ## Results
-================================================================================ 3 failed, 15 passed, 1 skipped in 6.77s =================================================================================
+3 failed, 15 passed, 1 skipped in 6.77s 
 |      filepath       |               function                | passed | failed | skipped | SUBTOTAL |
 | ------------------- | ------------------------------------- | -----: | -----: | ------: | -------: |
 | v1/test_smoke_v1.py | test_smoke_green                      |      1 |      0 |       0 |        1 |
