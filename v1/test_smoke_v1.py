@@ -6,7 +6,7 @@ from utils import utils
 
 
 def test_smoke_green():
-    endpoint = "/api/v2/CreateDeal"
+    endpoint = "/api/v1/CreateDeal"
     params = {
         "title": "Old Title",
         "description": "Old title desc",
@@ -22,14 +22,14 @@ def test_smoke_green():
     assert utils.Is_uuid(dealId), f"{dealId} didn't match regex"
 
     # This can be extracted do different function
-    endpoint = f"/api/v2/GetDeal/{dealId}"
+    endpoint = f"/api/v1/GetDeal/{dealId}"
     response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS)
     assert response.status_code == 200
     data = response.json()
     assert data.get("expiresAt") == params.get("expiresAt")
     assert data.get("title") == params.get("title")
     assert data.get("description") == params.get("description")
-    assert data.get("isVerified") == False
+    assert data.get("isVerified") == None
     assert data.get("verifiedAt") == None
     assert data.get("category") == None
 
@@ -38,12 +38,12 @@ def test_smoke_green():
         "description": "New title desc",
         "expiresAt": "2030-12-31T23:59:59+00:00",
     }
-    endpoint = f"/api/v2/UpdateDeal/{dealId}"
+    endpoint = f"/api/v1/UpdateDeal/{dealId}"
     response = requests.put(f"{BASE_URL}{endpoint}", headers=HEADERS, json=params)
     assert response.status_code == 204
     assert response.text == ""
 
-    endpoint = f"/api/v2/GetDeal/{dealId}"
+    endpoint = f"/api/v1/GetDeal/{dealId}"
     response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS)
     assert response.status_code == 200
     data = response.json()
@@ -51,27 +51,25 @@ def test_smoke_green():
     assert data.get("title") == params.get("title")
     assert data.get("description") == params.get("description")
 
-    endpoint = f"/api/v2/DeleteDeal/{dealId}"
+    endpoint = f"/api/v1/DeleteDeal/{dealId}"
     response = requests.delete(f"{BASE_URL}{endpoint}", headers=HEADERS)
     assert response.status_code == 204
     assert response.text == ""
 
-    endpoint = f"/api/v2/GetDeal/{dealId}"
+    endpoint = f"/api/v1/GetDeal/{dealId}"
     response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS)
     assert response.status_code == 404
     assert response.text == f"Deal with id '{dealId}' not found."
 
 
 def test_verified_date_is_correct():
-    endpoint = "/api/v2/CreateDeal"
+    endpoint = "/api/v1/CreateDeal"
     params = {
         "title": "Old Title",
         "description": "Old title desc",
         "domain": "example1.com",
         "code": "SAVE20",
         "expiresAt": "2025-12-31T23:59:59+00:00",
-        "isVerified": True,
-        "category": "Sport",
     }
     response = requests.post(f"{BASE_URL}{endpoint}", headers=HEADERS, json=params)
     print(response.text)
@@ -80,11 +78,11 @@ def test_verified_date_is_correct():
     dealId = data.get("dealId")
     print(dealId)
 
-    endpoint = f"/api/v2/GetDeal/{dealId}"
+    endpoint = f"/api/v1/GetDeal/{dealId}"
     response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS)
 
     # Cleanup
-    endpoint = f"/api/v2/DeleteDeal/{dealId}"
+    endpoint = f"/api/v1/DeleteDeal/{dealId}"
     requests.delete(f"{BASE_URL}{endpoint}", headers=HEADERS)
 
     assert response.status_code == 200
@@ -92,21 +90,19 @@ def test_verified_date_is_correct():
     assert data.get("expiresAt") == params.get("expiresAt")
     assert data.get("title") == params.get("title")
     assert data.get("description") == params.get("description")
-    assert data.get("category") == params.get("category")
-    assert data.get("isVerified") == params.get("isVerified")
-    assert data.get("verifiedAt") != None, "This should fail"
+    assert data.get("category") == None
+    assert data.get("isVerified") == None
+    assert data.get("verifiedAt") == None
 
 
 def test_post_verified_date_is_correct():
-    endpoint = "/api/v2/CreateDeal"
+    endpoint = "/api/v1/CreateDeal"
     params = {
         "title": "Old Title",
         "description": "Old title desc",
         "domain": "example2.com",
         "code": "SAVE20",
         "expiresAt": "2025-12-31T23:59:59+00:00",
-        "isVerified": True,
-        "category": "Sport",
     }
     response = requests.post(f"{BASE_URL}{endpoint}", headers=HEADERS, json=params)
     print(response.text)
@@ -115,11 +111,11 @@ def test_post_verified_date_is_correct():
     dealId = data.get("dealId")
     print(dealId)
 
-    endpoint = f"/api/v2/GetDeal/{dealId}"
+    endpoint = f"/api/v1/GetDeal/{dealId}"
     response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS)
 
     # Cleanup
-    endpoint = f"/api/v2/DeleteDeal/{dealId}"
+    endpoint = f"/api/v1/DeleteDeal/{dealId}"
     requests.delete(f"{BASE_URL}{endpoint}", headers=HEADERS)
 
     assert response.status_code == 200
@@ -127,21 +123,19 @@ def test_post_verified_date_is_correct():
     assert data.get("expiresAt") == params.get("expiresAt")
     assert data.get("title") == params.get("title")
     assert data.get("description") == params.get("description")
-    assert data.get("category") == params.get("category")
-    assert data.get("isVerified") == params.get("isVerified")
-    assert data.get("verifiedAt") != None, "This should fail"
+    assert data.get("category") == None
+    assert data.get("isVerified") == None
+    assert data.get("verifiedAt") == None
 
 
 def test_put_verified_date_is_correct():
-    endpoint = "/api/v2/CreateDeal"
+    endpoint = "/api/v1/CreateDeal"
     params = {
         "title": "Old Title",
         "description": "Old title desc",
         "domain": "example3.com",
         "code": "SAVE20",
         "expiresAt": "2025-12-31T23:59:59+00:00",
-        "isVerified": False,
-        "category": "Sport",
     }
     response = requests.post(f"{BASE_URL}{endpoint}", headers=HEADERS, json=params)
     print(response.text)
@@ -150,20 +144,17 @@ def test_put_verified_date_is_correct():
     dealId = data.get("dealId")
     print(dealId)
 
-    new_params = {
-        "title": "Old Title",
-        "isVerified": True,
-    }
-    endpoint = f"/api/v2/UpdateDeal/{dealId}"
+    new_params = {"title": "New Title", "description": "New Desc"}
+    endpoint = f"/api/v1/UpdateDeal/{dealId}"
     response = requests.put(f"{BASE_URL}{endpoint}", headers=HEADERS, json=new_params)
 
     assert response.status_code == 204
     assert response.text == ""
-    endpoint = f"/api/v2/GetDeal/{dealId}"
+    endpoint = f"/api/v1/GetDeal/{dealId}"
     response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS)
 
     # Cleanup
-    endpoint = f"/api/v2/DeleteDeal/{dealId}"
+    endpoint = f"/api/v1/DeleteDeal/{dealId}"
     requests.delete(f"{BASE_URL}{endpoint}", headers=HEADERS)
 
     assert response.status_code == 200
@@ -171,74 +162,15 @@ def test_put_verified_date_is_correct():
 
     assert data.get("expiresAt") == None
     assert data.get("title") == new_params.get("title")
-    assert data.get("description") == ""
+    assert data.get("description") == new_params.get("description")
     assert data.get("category") == None
-    assert data.get("isVerified") == new_params.get("isVerified")
-    assert data.get("verifiedAt") != None, "This should fail"
-
-
-def test_search_on_different_query_params():
-    pytest.skip("i get 500 on this test and need to look at server logs  ¯_\(ツ)_/¯")
-    newDeals = [
-        ["a", False, "Sport"],
-        ["b", True, "Sport"],
-        ["c", False, "Monocycles"],
-        ["d", True, "Monocycles"],
-    ]
-    endpoint = "/api/v2/CreateDeal"
-    dealIds = []
-    for [name, verified, category] in newDeals:
-        params = {
-            "title": name,
-            "isVerified": verified,
-            "category": category,
-            "description": "desc",
-            "domain": "example4.com",
-            "code": "SALE20",
-            "expiresAt": "2025-12-31T23:59:59+00:00",
-        }
-        response = requests.post(f"{BASE_URL}{endpoint}", headers=HEADERS, json=params)
-        print(response.status_code)
-        print(response.text)
-        data = response.json()
-        dealId = data.get("dealId")
-        dealIds.append(dealId)
-
-    print(f"dealIds={dealIds}")
-
-    endpoint = f"/api/v2/GetDeals/example4.com?isVerified=true"
-    response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS)
-    assert response.status_code == 200
-    deals = response.json()
-    assert len(deals) == 2
-
-    endpoint = f"/api/v2/GetDeals/example4.com?isVerified=false"
-    response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS)
-    assert response.status_code == 200
-    deals = response.json()
-    assert len(deals) == 2
-
-    endpoint = f"/api/v2/GetDeals/example4.com?category=Sport"
-    response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS)
-    assert response.status_code == 200
-    deals = response.json()
-    assert len(deals) == 2
-
-    endpoint = f"/api/v2/GetDeals/example4.com?category=Monocycles"
-    response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS)
-    assert response.status_code == 200
-    deals = response.json()
-    assert len(deals) == 2
-
-    # Cleanup
-    for dealId in dealIds:
-        endpoint = f"/api/v2/DeleteDeal/{dealId}"
-        requests.delete(f"{BASE_URL}{endpoint}", headers=HEADERS)
+    assert data.get("isVerified") == None
+    assert data.get("verifiedAt") == None
 
 
 def test_get_deals_green():
     """Test GET request to fetch deals"""
-    endpoint = "/api/v2/GetDeals/example.com"
+    endpoint = "/api/v1/GetDeals/example.com"
     params = {"isVerified": "true", "category": "Sport"}
 
     response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS, params=params)
@@ -252,7 +184,7 @@ def test_get_deals_green():
 
 def test_get_deal_green():
     """Test GET request to fetch deal"""
-    endpoint = "/api/v2/GetDeal/1b442cb336add37e8375070627efe751"
+    endpoint = "/api/v1/GetDeal/1b442cb336add37e8375070627efe751"
     params = {"isVerified": "true", "category": "Sport"}
 
     response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS, params=params)
@@ -260,7 +192,6 @@ def test_get_deal_green():
     data = response.json()
     assert response.status_code == 200
     assert isinstance(data, (list, dict))
-    assert data.get("category") == "Electronics"
     assert data.get("code") == "HOLIDAY10"
     assert data.get("domain") == "asus.com"
     assert data.get("description") == "Take $100 off with coupon code on $100+ orders"
@@ -295,7 +226,7 @@ def test_update_on_non_existing():
         "description": "New title desc",
         "expiresAt": "2030-12-31T23:59:59Z",
     }
-    endpoint = f"/api/v2/UpdateDeal/{non_existing_id}"
+    endpoint = f"/api/v1/UpdateDeal/{non_existing_id}"
     response = requests.put(f"{BASE_URL}{endpoint}", headers=HEADERS, json=params)
 
     assert response.status_code == 404
@@ -304,7 +235,7 @@ def test_update_on_non_existing():
 
 def test_delete_on_non_existing():
     non_existing_id = "00000000000000000000000000000000"
-    endpoint = f"/api/v2/DeleteDeal/{non_existing_id}"
+    endpoint = f"/api/v1/DeleteDeal/{non_existing_id}"
     response = requests.delete(f"{BASE_URL}{endpoint}", headers=HEADERS)
 
     assert response.status_code == 404
@@ -312,7 +243,7 @@ def test_delete_on_non_existing():
 
 
 def test_merchants_green():
-    endpoint = f"/api/v2/GetMerchants"
+    endpoint = f"/api/v1/GetMerchants"
     response = requests.get(f"{BASE_URL}{endpoint}", headers=HEADERS)
 
     assert response.status_code == 200
