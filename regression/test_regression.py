@@ -208,3 +208,60 @@ def test_verified_deal_regression():
     # Cleanup
     requests.delete(f"{BASE_URL}/api/v1/DeleteDeal/{v1_deal_id}", headers=HEADERS)
     requests.delete(f"{BASE_URL}/api/v2/DeleteDeal/{v2_deal_id}", headers=HEADERS)
+
+
+def test_deal_conflict_regression():
+    """Test that conflict handling is consistent between v1 and v2"""
+    # Create a deal in v1 first
+    v1_params = utils.get_unique_test_data("v1")
+
+    v1_response = requests.post(
+        f"{BASE_URL}/api/v1/CreateDeal", headers=HEADERS, json=v1_params
+    )
+    assert v1_response.status_code == 201
+    v1_deal_id = v1_response.json().get("dealId")
+
+    # Try to create a deal with the same ID in v1
+    v1_conflict_response = requests.post(
+        f"{BASE_URL}/api/v1/CreateDeal", headers=HEADERS, json=v1_params
+    )
+    assert v1_conflict_response.status_code == 409
+    assert "exists" in v1_conflict_response.text.lower()
+
+    # Try to create a deal with the same ID in v2
+    v2_conflict_response = requests.post(
+        f"{BASE_URL}/api/v2/CreateDeal", headers=HEADERS, json=v1_params
+    )
+    assert v2_conflict_response.status_code == 409, "This should fail"
+    assert "exists" in v2_conflict_response.text.lower(), "This should fail"
+
+    # Cleanup
+    requests.delete(f"{BASE_URL}/api/v1/DeleteDeal/{v1_deal_id}", headers=HEADERS)
+
+
+def test_unauthorized_access_regression():
+    """Test that unauthorized access handling is consistent between v1 and v2"""
+    # Test unauthorized access for various endpoints
+    endpoints = [
+        "/api/v1/GetDeals/dell.com",
+        "/api/v2/GetDeals/dell.com",
+        "/api/v1/GetMerchants",
+        "/api/v2/GetMerchants",
+    ]
+
+    for endpoint in endpoints:
+        # Test without headers
+        response = requests.get(f"{BASE_URL}{endpoint}")
+        assert response.status_code == 401
+        assert "unauthorized" in response.text.lower()
+
+        # Test with empty headers
+        response = requests.get(f"{BASE_URL}{endpoint}", headers={})
+        assert response.status_code == 401
+        assert "unauthorized" in response.text.lower()
+
+        # Test with invalid headers
+        invalid_headers = {"Authorization": "Invalid-Token"}
+        response = requests.get(f"{BASE_URL}{endpoint}", headers=invalid_headers)
+        assert response.status_code == 401
+        assert "unauthorized" in response.text.lower()

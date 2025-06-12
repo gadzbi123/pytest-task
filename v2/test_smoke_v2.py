@@ -3,6 +3,7 @@ import requests
 from datetime import datetime
 from config import BASE_URL, HEADERS, MERCHANTS_ARRAY
 from utils import utils
+import json
 
 
 def test_smoke_green():
@@ -177,30 +178,54 @@ def test_put_verified_date_is_correct():
     assert data.get("verifiedAt") != None, "This should fail"
 
 
+# def test_conflict_on_same_domain():
+#     # both for v1 and v2
+#     endpoint = "/api/v2/CreateDeal"
+#     params = {
+#         "title": "conflicting",
+#         "isVerified": True,
+#         "category": "Sport",
+#         "description": "desc",
+#         "domain": "example5.com",
+#         "code": "CODE5",
+#         "expiresAt": "2025-12-31T23:59:59+00:00",
+#     }
+#     response = requests.post(f"{BASE_URL}{endpoint}", headers=HEADERS, json=params)
+#     assert response.status_code == 201
+#     data = response.json()
+#     dealId = data.get("dealId")
+#     assert utils.Is_uuid(dealId)
+#     response = requests.post(f"{BASE_URL}{endpoint}", headers=HEADERS, json=params)
+#     assert response.status_code == 409
+#     data = response.json()
+#     dealId = data.get("dealId")
+#     assert utils.Is_uuid(dealId)
+
+
 def test_search_on_different_query_params():
-    pytest.skip("i get 500 on this test and need to look at server logs  ¯__(ツ)_/¯")
+    # pytest.skip("i get 500 on this test and need to look at server logs  ¯__(ツ)_/¯")
     newDeals = [
-        ["a", False, "Sport"],
-        ["b", True, "Sport"],
-        ["c", False, "Monocycles"],
-        ["d", True, "Monocycles"],
+        ["a", False, "Sport", "CODE1"],
+        ["b", True, "Sport", "CODE2"],
+        ["c", False, "Monocycles", "CODE3"],
+        ["d", True, "Monocycles", "CODE4"],
     ]
     endpoint = "/api/v2/CreateDeal"
     dealIds = []
-    for [name, verified, category] in newDeals:
+    for [name, verified, category, code] in newDeals:
         params = {
             "title": name,
             "isVerified": verified,
             "category": category,
             "description": "desc",
             "domain": "example4.com",
-            "code": "SALE20",
+            "code": code,
             "expiresAt": "2025-12-31T23:59:59+00:00",
         }
         response = requests.post(f"{BASE_URL}{endpoint}", headers=HEADERS, json=params)
         print(response.status_code)
         print(response.text)
-        data = response.json()
+        data = json.loads(response.text)
         dealId = data.get("dealId")
         dealIds.append(dealId)
 
